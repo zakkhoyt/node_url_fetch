@@ -8,8 +8,8 @@ console.log(`typeof amazon_tools.extractASIN: ${typeof amazon_tools.extractASIN}
 console.log(`typeof amazon_tools.bar: ${typeof amazon_tools.bar}`); // => 'function'
 
 
-let asin = '';
 
+let asin = '';
 // https://nodejs.org/docs/latest/api/process.html#process_process_argv
 // 0: /opt/homebrew/Cellar/node/23.6.0/bin/node
 // 1: /Users/zakkhoyt/code/repositories/z2k/github/node_url_fetch/fetch_html.js
@@ -24,6 +24,13 @@ process.argv.forEach(function (val, index, array) {
 console.log(`asin: ${asin}`);
 
 
+
+// let contents = amazon_tools.readHTMLFromFile(asin);
+// console.log(`Did read content file for asin: ${asin}`);
+// debugger;
+
+
+
 // const url = "https://duckduckgo.com/";
 // const url = "https://www.amazon.com/dp/B0DP5BQTRV";
 
@@ -32,7 +39,6 @@ console.log(`asin: ${asin}`);
 
 let url = "https://www.amazon.com/dp/B0DP5BQTRV";
 console.log(`Will fetch html for url: ${url}`)
-
 
 var count = 0;
 https.get(
@@ -64,16 +70,17 @@ https.get(
             // dapi.message.send(finalSourceCode)
             const content = 'Some content!';
 
-            fs.writeFile('fetches/B0DP5BQTRV.html', finalSourceCode, err => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    console.log(`Did write to file: B0DP5BQTRV.html`);
-                }
-            });
+            // fs.writeFile('fetches/B0DP5BQTRV.html', finalSourceCode, err => {
+            //     if (err) {
+            //         console.error(err);
+            //     } else {
+            //         console.log(`Did write to file: B0DP5BQTRV.html`);
+            //     }
+            // });
+            amazon_tools.writeHTMLToFile(url, finalSourceCode);
 
-            let asin = amazon_tools.extractASIN(url);
-            console.log(`extracted asin: ${asin}`);
+            // let asin = amazon_tools.extractASIN(url);
+            // console.log(`extracted asin: ${asin}`);
 
             
         }); 
