@@ -4,7 +4,7 @@
 module.exports = {
     extractASIN: function (url) {
         try {
-            let result = url.match(/^(.*https:\/\/.*\/dp\/)(.*)(\?.*)$/);
+            let result = url.match(/^(.*https:\/\/.*\/dp\/)(.*)(\?*.*)$/);
             console.log("amazon-debug 30");  
       
             console.log("amazon-urlRegex[0]: " + result[0]);

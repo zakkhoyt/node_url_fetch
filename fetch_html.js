@@ -34,7 +34,6 @@ let url = "https://www.amazon.com/dp/B0DP5BQTRV";
 console.log(`Will fetch html for url: ${url}`)
 
 
-debugger;
 var count = 0;
 https.get(
     url, 
@@ -60,7 +59,6 @@ https.get(
 
         // https://nodejs.org/api/stream.html#stream_event_end
         response.on('end', function() {
-            debugger;
             // console.log(`finalSourceCode: ${finalSourceCode}`)
             process.stdout.write(finalSourceCode);
             // dapi.message.send(finalSourceCode)
@@ -73,9 +71,12 @@ https.get(
                     console.log(`Did write to file: B0DP5BQTRV.html`);
                 }
             });
-        }); 
 
-        
+            let asin = amazon_tools.extractASIN(url);
+            console.log(`extracted asin: ${asin}`);
+
+            
+        }); 
     }
 )
 .on(
