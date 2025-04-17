@@ -44,8 +44,12 @@ console.log(`asin: ${asin}`);
 
 
 // // let sourceCode = amazon_tools.readHTMLFromFile(asin);
-// let sourceCode = amazon_tools.readFileSync(asin);
+let sourceCode = amazon_tools.readFileSync(asin);
 // console.log(`Did read sourceCode: ${sourceCode}`);
+
+amazon_tools.extractProductProperties(sourceCode);
+return ;
+
 
 // let lines = sourceCode.split(/\r\n|\r|\n/).length;
 // console.log(`Did read content file for asin: ${asin}. lines: ${lines} length: ${sourceCode.length}`);
@@ -59,10 +63,17 @@ console.log(`asin: ${asin}`);
 // debugger;
 
 
-// exit;
 
 // let url = "https://www.amazon.com/dp/B0CCF9B42M?th=1&psc=1"
-let url = "https://www.amazon.com/OQQ-Womens-Square-Dress-Dresses/dp/B0DSCTTKRM/?_encoding=UTF8&pd_rd_w=agnf9&content-id=amzn1.sym.255b3518-6e7f-495c-8611-30a58648072e%3Aamzn1.symc.a68f4ca3-28dc-4388-a2cf-24672c480d8f&pf_rd_p=255b3518-6e7f-495c-8611-30a58648072e&pf_rd_r=WRWXPSPDXWMAM3YFCBJH&pd_rd_wg=UDent&pd_rd_r=eff420ed-96ee-47f3-ac8c-791788829217&ref_=pd_hp_d_atf_ci_mcx_mr_ca_hp_atf_d&th=1&psc=1"
+let url = "https://www.amazon.com/dp/B0DSCTTKRM/?_encoding=UTF8&pd_rd_w=agnf9&content-id=amzn1.sym.255b3518-6e7f-495c-8611-30a58648072e%3Aamzn1.symc.a68f4ca3-28dc-4388-a2cf-24672c480d8f&pf_rd_p=255b3518-6e7f-495c-8611-30a58648072e&pf_rd_r=WRWXPSPDXWMAM3YFCBJH&pd_rd_wg=UDent&pd_rd_r=eff420ed-96ee-47f3-ac8c-791788829217&ref_=pd_hp_d_atf_ci_mcx_mr_ca_hp_atf_d&th=1&psc=1"
+
+
+let asin2 = amazon_tools.extractASIN(url);
+console.log(`Did extract asin: ${asin2}`);
+debugger;
+
+
+
 console.log(`Will fetch html for url: ${url}`)
 var count = 0;
 https.get(

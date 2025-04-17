@@ -28,7 +28,7 @@ module.exports = {
 };
 
 
-let fetchesDir = './fetched';
+let fetchesDir = './fetches';
 function ensureDirExists(dir) {
   // TODO: Completion for nested functions (promises?)
   // fs.existsSync()
@@ -184,11 +184,37 @@ async function readFileAsync2(filePath) {
 
 
 
-
+// * [x] https://www.amazon.com/dp/B07BDDPR9K
+// * [x] https://www.amazon.com/dp/B07BDDPR9K?other=params
+// * [x] https://www.amazon.com/dp/B07BDDPR9K/other/path
+// * [x] https://www.amazon.com/gp/product/B07BDDPR9K
+// * [x] https://www.amazon.com/gp/product/B07BDDPR9K?other=params
+// * [x] https://www.amazon.com/gp/product/B07BDDPR9K/other/path
+// * [x] https://www.amazon.com/o/ASIN/B07BDDPR9K
+// * [x] https://www.amazon.com/o/ASIN/B07BDDPR9K?other=params
+// * [x] https://www.amazon.com/o/ASIN/B07BDDPR9K/other/path
 
 function extractASIN(url) {
+  
   try {
-    let result = url.match(/^(.*https:\/\/.*\/dp\/)(.*)(\?*.*)$/);
+    
+    // TODO: if url is /dp/ style, or /product/gp/asin or 
+    // let result = url.match(/^(.*https:\/\/.*\/dp\/)([A-Z0-9]*)(.*)$/);
+    // let result = url.match(/^(.*https:\/\/.*\/gp\/product\/)([A-Z0-9]*)(.*)$/);
+    var regex = /^$/;
+    if (url.includes("/dp/")) {
+      console.log(`will extract ASIN from /dp/ url: ${url}`)
+      regex = /^(.*https:\/\/.*\/dp\/)([A-Z0-9]*)(.*)$/;
+    } else if (url.includes("/gp/product")) {
+      console.log(`will extract ASIN from /gp/product/ url: ${url}`)
+      regex = /^(.*https:\/\/.*\/gp\/product\/)([A-Z0-9]*)(.*)$/;
+    } else if (url.includes("/o/ASIN/")) {
+      console.log(`will extract ASIN from /o/ASIN/ url: ${url}`)
+      regex = /^(.*https:\/\/.*\/dp\/)([A-Z0-9]*)(.*)$/;
+    }
+
+
+    let result = url.match(regex);
     console.log("amazon-debug 30");  
 
     console.log("amazon-urlRegex[0]: " + result[0]);
@@ -252,52 +278,15 @@ function extractProductProperties(sourceCode) {
   // * shipable (to current address)
 }
 
-function extractASINFromSourceCode(sourceCode) {
-  // look for a line like his
-  // '  , asin: "B0CCFCLVST"'
-
+function extractASINFromSourceCode(sourceCode) {  
   try {
-    let result = sourceCode.match(/^(.*, asin: .*")([A-Z0-9]?)(".*)$/);
-    // let result = sourceCode.match(/^(.*, asin: ")([A-Z0-9]?)(".*)$/);
-    console.log("extractASIN result[0]: " + result[0]);
-    console.log("extractASIN result[1]: " + result[1]);
-    console.log("extractASIN result[2]: " + result[2]);
-    console.log("extractASIN result[3]: " + result[3]);
-    
-    if ( result == null ){
-      console.log("amazon-debug 31");
-      console.log("amazon-urlRegex: null");
-    } else {
-      for(var i = 0; i < result.length; ++i){
-        console.log("amazon-urlRegex[i]: i: " + i + " result[i]" + result[i]);
-      }
-
-
-      console.log("amazon-urlRegex[0]: " + result[0]);
-      console.log("amazon-urlRegex[1]: " + result[1]);
-      console.log("amazon-urlRegex[2]: " + result[2]);
-      console.log("amazon-urlRegex[3]: " + result[3]);
-      console.log("amazon-debug 32");
-    }
-    console.log("amazon-debug 33");
-
-
-
-
-    let asid = result[2];
-    console.log("amazon-debug 50");
-
-    if ( asid == null ){
-      // some_variable is either null or undefined
-      console.log("amazon-asid: null|undefined");
-      return null;
-    } else {
-      console.log("amazon-asid: " + asid);
-      return asid;
-    }
+    // look for a line like his
+    // '  , asin: "B0CCFCLVST"'
+    let result = sourceCode.match(/  , asin: "(.+)".*/);
+    asin=result[1];
+    return asin;
   }
   catch(err) {      
-    console.log("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message);
     console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message);
     debugger;
   } 
