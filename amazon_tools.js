@@ -258,8 +258,21 @@ function extractASIN(url) {
 
 function extractProductProperties(sourceCode) {
   console.log("Will extract productProperties from sourceCode")
-  let asin = extractASINFromSourceCode(sourceCode);
-  console.log(`Did extract asin: ${asin}`)
+  // let asin = extractASINFromSourceCode(sourceCode);
+  // console.log(`Did extract asin: ${asin}`)
+  
+  // let imageURL = extractProductImageURL(sourceCode);
+  // console.log(`Did extract imageURL: ${imageURL}`)
+  
+  // let imageID = extractProductImageID(sourceCode);
+  // console.log(`Did extract imageID: ${imageID}`)
+  
+  let title0 = extractProductTitle(sourceCode);
+  console.log(`Did extract title0: ${title0}`)
+
+
+
+
   // debugger;
   // ## Extract from a HTML Source
   // * productASIN
@@ -292,14 +305,161 @@ function extractASINFromSourceCode(sourceCode) {
   } 
 }
 
+
+function extractProductImageURL(sourceCode) {
+  try {
+    console.log("amazon-debug 131");  
+    // let result = url.match(/^(.*https:\/\/.*\/dp\/)(.*)(\?.*)$/);
+    let imgResult = sourceCode.match(/(var iUrl = ")(.*)";/);
+    
+    if (imgResult == null) {
+      return null;
+    } else {
+      let imageURL = imgResult[2];
+      return imageURL;
+    }
+  } catch(err) {
+    console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message); 
+    debugger;
+    return null;
+  }
+}
+
+
 // return an imageID
 function extractProductImageID(sourceCode) {
+  // amazon-imgUrl: https://m.media-amazon.com/images/I/517W--vk2LL.__AC_SX300_SY300_QL70_ML2_.jpg
 
+  let imageURL = extractProductImageURL(sourceCode);
+  console.log(`Did extract imageURL: ${imageURL}`)
+
+
+  // https://m.media-amazon.com/images/I/517W--vk2LL.__AC_S2600_SY200.jpg
+  // baseURL: https://m.media-amazon.com/images/I/
+  // imgID: 517W--vk2LL
+  // imgSize: .__AC_SX600_SY200
+  //   .__AC_SX600
+  //   .__AC_SY600
+  //   .SY200
+  // imgFormat: .jpg
+  try {
+    let regex = imageURL.match(/^(.*https:\/\/.*\/I\/)(.*)\.(.*)\.(.*)$/)
+    console.log("amazon-debug 170");  
+    let imageBaseUrl = regex[1]
+    let imageId = regex[2]
+    let imageQuality = regex[3]
+    let imageFormat = regex[4]
+    console.log("amazon-extractProductImageID: imageBaseUrl: " + imageBaseUrl);
+    console.log("amazon-extractProductImageID: imageId: " + imageId);
+    console.log("amazon-extractProductImageID: imageQuality: " + imageQuality);
+    console.log("amazon-extractProductImageID: imageFormat: " + imageFormat);
+    // console.log("amazon-debug 177");
+
+    return imageId;
+    
+    // if ( regex == null ){
+    //   console.log("amazon-debug 172");
+    //   console.log("amazon-urlRegex: null");
+    // } else {
+    //   console.log("amazon-debug 173");
+    //   for(var i = 0; i < regex.length; ++i){
+    //     console.log("amazon-urlRegex[i]: i: " + i + " regex[i]" + regex[i]);
+    //   }
+    //   console.log("amazon-debug 174");
+    // }
+    // console.log("amazon-debug 175");
+  } catch(err) {
+    console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message); 
+    debugger;
+    return null;
+  }
 }
 // returns product titles (dictionary)
 function extractProductTitle(sourceCode) {
-  // productTitle
-  // data-old-hires=
+  // try {
+  //   // productTitle
+  //   //   <span id="productTitle" class="a-size-large product-title-word-break">        fasfasdfs       </span>       </h1>  
+  //   // look for a line like his
+  //   // '  , asin: "B0CCFCLVST"'
+  //   let result = sourceCode.match(/id="productTitle" class="a-size-large product-title-word-break">(.*)(<\/span>.*)/);
+  //   let productTitle = result[1].trim();
+  //   return productTitle;
+  // }
+  // catch(err) {      
+  //   console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message);
+  //   debugger;
+  // }   
+
+  
+  // try {
+  //   // data-old-hires=
+  //   //  <img alt="OQQ Women&amp;#39;s Square Neck Ruffle Hem Mini Dress Summer Short Sleeve with Shorts Party Dresses" src="https://m.media-amazon.com/images/I/71ii1cYLBNL.__AC_SX342_SY445_QL70_ML2_.jpg" data-old-hires=
+  //   let result1 = sourceCode.match(/(.*)(data-old-hires=.*)/);
+  //   let htmlLine = result1[1];
+
+  //   // '	            <img alt="OQQ Women&amp;#39;s Square Neck Ruffle Hem Mini Dress Summer Short Sleeve with Shorts Party Dresses" src="https://m.media-amazon.com/images/I/71ii1cYLBNL.__AC_SX342_SY445_QL70_ML2_.jpg" '
+  //   let result2 = htmlLine.match(/(.*<img alt=")(.*)(" src=")/);
+  //   let title1 = result2[2];
+
+  //   return title1;
+
+  //   // return htmlLine;
+  // }
+  // catch(err) {      
+  //   console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message);
+  //   debugger;
+  // }   
+  
+  
+  try {    
+    // canonical part 1
+    //  <meta name="title" content="asdfasdfsa"/><title>
+    let canonicalLine = sourceCode.match(/(<link rel="canonical".*)/)[1];
+
+    let cannonicalResult1 = canonicalLine.match(/<meta name="title" content="(.*)"\/><title>/);    
+    if (cannonicalResult1 == null) {
+      // TODO: handle
+    } else {
+      let cannonicalTitle1 = cannonicalResult1[1];
+      return cannonicalTitle1;  
+    }
+    
+
+    let cannonicalResult2 = canonicalLine.match(/<title>(.*)<\/title>/);    
+    if (cannonicalResult2 == null) {
+      // TODO: handle
+    } else {
+      let cannonicalTitle2 = cannonicalResult2[1];
+      return cannonicalTitle2;
+    }
+    
+    let cannonicalResult3 = canonicalLine.match(/name="description" content="(.*)"\/>/);    
+    if (cannonicalResult3 == null) {
+      // TODO: handle
+    } else {
+      let cannonicalTitle3 = cannonicalResult3[1];
+      return cannonicalTitle3;
+    }
+  }
+  catch(err) {      
+    console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message);
+    debugger;
+  }   
+
+  
+
+  // try {
+  //   // canonical part 2
+  //   //  <meta name="title" content="asdfasdfsa"/><title>
+  //   let result1 = sourceCode.match(/<meta name="title" content="(.*)"\/><title>/);
+  //   let title2 = result1[1];
+  //   return title2;
+  // }
+  // catch(err) {      
+  //   console.error("amazon-debug [ERROR] err.name: " + err.name + " err.message: " + err.message);
+  //   debugger;
+  // }   
+  // // data-old-hires=
   // metaTitle
   // titleValue
   // metaDescription
